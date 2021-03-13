@@ -1,15 +1,22 @@
-import { IncomingMessage, ServerResponse } from "node:http";
+import { NextApiRequest, NextApiResponse} from 'next'
 import { PokemonTCG } from 'pokemon-tcg-sdk-typescript'
 
-const AllPokemonsters = async(request: IncomingMessage, response: ServerResponse) =>{
-    let params: PokemonTCG.IQuery[] = [{ name: 'name', value: 'Charizard' }];
-    PokemonTCG.Card.where(params)
+const AllPokemonsters = async(request: NextApiRequest, response: NextApiResponse) =>{
+    let dataApi = [];
+    let errorApi = null;
+    //let params: PokemonTCG.IQuery[] = [{ name: 'name', value: 'Charizard' }];
+    
+    await PokemonTCG.Card.all()//where(params)
     .then(cards => {
-        response.end(JSON.stringify({data: cards, error: null}));
+        dataApi = cards;
+        response.statusCode = 200;
     })
     .catch(error => {
-        response.end(JSON.stringify({data: null, error: error}));
+        errorApi = error;
+        response.statusCode = 500;
     });
+    
+    response.end(JSON.stringify({data: dataApi, error: errorApi}));
 }
 
 export default AllPokemonsters
