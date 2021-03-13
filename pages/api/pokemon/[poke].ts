@@ -2,13 +2,24 @@ import { NextApiRequest, NextApiResponse} from 'next'
 import { PokemonTCG } from 'pokemon-tcg-sdk-typescript'
 
 const FindPokemonster = async(request: NextApiRequest, response: NextApiResponse) =>{
-    const pokeid = request.query.pokeid.toString();
-    let dataApi = {};
+    const poke = request.query.poke.toString();
+    let params: PokemonTCG.IQuery[] = [{ name: 'name', value: poke }];
+    let dataApi = [];
     let errorApi = null;
 
-    await PokemonTCG.Card.find(pokeid)
+    await PokemonTCG.Card.find(poke)
     .then(cards => {
-        dataApi = cards;
+        dataApi.push(cards);
+        response.statusCode = 200;
+    })
+    .catch(error => {
+        errorApi = error;
+        response.statusCode = 500;
+    });
+
+    await PokemonTCG.Card.where(params)
+    .then(cards => {
+        dataApi.push(cards);
         response.statusCode = 200;
     })
     .catch(error => {

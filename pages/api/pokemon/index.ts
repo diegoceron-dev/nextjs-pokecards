@@ -4,7 +4,6 @@ import { PokemonTCG } from 'pokemon-tcg-sdk-typescript'
 const AllPokemonsters = async(request: NextApiRequest, response: NextApiResponse) =>{
     let dataApi = [];
     let errorApi = null;
-    //let params: PokemonTCG.IQuery[] = [{ name: 'name', value: 'Charizard' }];
     
     await PokemonTCG.Card.all()//where(params)
     .then(cards => {
